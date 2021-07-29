@@ -73,7 +73,7 @@ namespace WsAsp
             var sockets = _sockets;
             foreach (var socket in sockets)
             {
-                await socket.SendBinaryDataAsync(data, offset, count, token);
+                await socket.SendBinaryDataAsync(data, offset, count, token).ConfigureAwait(false);
             }
         }
 
@@ -88,7 +88,7 @@ namespace WsAsp
             var sockets = _sockets;
             foreach (var socket in sockets)
             {
-                await socket.SendTextAsync(message, encoding, token);
+                await socket.SendTextAsync(message, encoding, token).ConfigureAwait(false);
             }
         }
     }

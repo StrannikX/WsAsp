@@ -53,7 +53,7 @@ namespace WsAsp
             {
                 throw new ArgumentNullException(nameof(Socket));
             }
-            await Socket.SendTextAsync(message, Encoding.UTF8, token);
+            await Socket.SendTextAsync(message, Encoding.UTF8, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace WsAsp
             {
                 throw new ArgumentNullException(nameof(Socket));
             }
-            await Socket.SendTextAsync(message, encoding, token);
+            await Socket.SendTextAsync(message, encoding, token).ConfigureAwait(false);
         }
         #endregion
 
@@ -81,7 +81,7 @@ namespace WsAsp
         /// <param name="token">Cancellation token</param>
         protected async Task SendBinaryDataAsync(byte[] data, CancellationToken token = default)
         {
-            await SendBinaryDataAsync(data, 0, data.Length, token);
+            await SendBinaryDataAsync(data, 0, data.Length, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace WsAsp
         /// <param name="count">Count of bytes to send.</param>
         protected async Task SendBinaryDataAsync(byte[] data, int count, CancellationToken token = default)
         {
-            await SendBinaryDataAsync(data, 0, count, token);
+            await SendBinaryDataAsync(data, 0, count, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace WsAsp
                 throw new ArgumentNullException(nameof(Socket));
             }
 
-            await Socket.SendBinaryDataAsync(data, offset, count, token);
+            await Socket.SendBinaryDataAsync(data, offset, count, token).ConfigureAwait(false);
         }
         #endregion
 
@@ -122,7 +122,7 @@ namespace WsAsp
         /// <param name="token">Cancellation token.</param>
         protected async Task SendBinaryDataToAllAsyncAsync(byte[] data, CancellationToken token = default)
         {
-            await SendBinaryDataToAllAsyncAsync(data, 0, data.Length, token);
+            await SendBinaryDataToAllAsyncAsync(data, 0, data.Length, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace WsAsp
         /// <param name="count">Count of bytes to send.</param>
         protected async Task SendBinaryDataToAllAsyncAsync(byte[] data, int count, CancellationToken token = default)
         {
-            await SendBinaryDataToAllAsyncAsync(data, 0, count, token);
+            await SendBinaryDataToAllAsyncAsync(data, 0, count, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace WsAsp
             {
                 throw new ArgumentNullException(nameof(Manager));
             }
-            await Manager.SendBinaryDataToAllAsync(data, offset, count, token);
+            await Manager.SendBinaryDataToAllAsync(data, offset, count, token).ConfigureAwait(false);
         }
         #endregion
 
@@ -168,7 +168,7 @@ namespace WsAsp
                 throw new ArgumentNullException(nameof(Manager));
             }
 
-            await Manager.SendTextToAllAsync(message, encoding, token);
+            await Manager.SendTextToAllAsync(message, encoding, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace WsAsp
         /// <param name="token">Cancellation token.</param>
         public async Task SendTextToAllAsync(string message, CancellationToken token = default)
         {
-            await SendTextToAllAsync(message, Encoding.UTF8, token);
+            await SendTextToAllAsync(message, Encoding.UTF8, token).ConfigureAwait(false);
         }
         #endregion
 
@@ -199,7 +199,7 @@ namespace WsAsp
             if (Socket.State != WebSocketState.Open)
                 return;
 
-            await Socket.CloseAsync(WebSocketCloseStatus.NormalClosure, closeMessage ?? String.Empty, token);
+            await Socket.CloseAsync(WebSocketCloseStatus.NormalClosure, closeMessage ?? String.Empty, token).ConfigureAwait(false);
         }
         #endregion
     }

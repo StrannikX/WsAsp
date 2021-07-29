@@ -81,7 +81,7 @@ namespace WsAsp
                         .CloseAsync(WebSocketCloseStatus.InternalServerError, e.Message, CancellationToken.None)
                         .ConfigureAwait(false);
                 }
-            });
+            }).ConfigureAwait(false);
 
             _manager.RemoveSocket(socket);
         }
@@ -109,7 +109,7 @@ namespace WsAsp
 
                     offset += result.Count;
                     free -= result.Count;
-
+                    
                     if (result.EndOfMessage || free != 0) break;
 
                     var newSize = buffer.Length + _options.BufferSize;

@@ -33,7 +33,7 @@ namespace WsAsp
                 buffer: new ArraySegment<byte>(data, offset, count),
                 WebSocketMessageType.Text,
                 endOfMessage: true,
-                cancellationToken: token);
+                cancellationToken: token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace WsAsp
                 buffer: new ArraySegment<byte>(buffer),
                 WebSocketMessageType.Text,
                 endOfMessage: true,
-                cancellationToken: token);
+                cancellationToken: token).ConfigureAwait(false);
         }
     }
 }
