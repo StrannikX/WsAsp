@@ -63,7 +63,7 @@ namespace WsAsp
         /// </summary>
         /// <param name="encoding">Encoding of message. <see cref="Encoding.UTF8"/> if null.</param>
         /// <returns>Decoded message string.</returns>
-        public string ReadStringAsync(Encoding? encoding = null)
+        public string GetString(Encoding? encoding = null)
         {
             encoding ??= Encoding.UTF8;
             return encoding.GetString(_data, 0, DataLength);
