@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 
 namespace WsAsp
 {
@@ -26,6 +27,8 @@ namespace WsAsp
         /// Max size in bytes of websocket reading buffer.
         /// </summary>
         private int _maxBufferSize = DefaultMaxBufferSize;
+
+        private ArrayPool<byte> _arrayPool = ArrayPool<byte>.Shared;
 
         /// <summary>
         /// Size in bytes of websocket reading buffer.
@@ -64,6 +67,15 @@ namespace WsAsp
 
                 _maxBufferSize = value;
             }
+        }
+
+        /// <summary>
+        /// Array pool used used to get buffer for message data
+        /// </summary>
+        public ArrayPool<byte> Pool
+        {
+            get => _arrayPool;
+            set => _arrayPool = value ?? throw new ArgumentNullException(nameof(value), "Array pool should not be null");
         }
     }
 }

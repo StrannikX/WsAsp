@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -93,39 +94,48 @@ namespace WsAsp
         /// <param name="handleMessage">Message handling delegate.</param>
         private async Task StartMessageLoopAsync(WebSocket socket, Func<WebSocketReceiveResult, byte[], int, Task> handleMessage)
         {
-            var buffer = new byte[_options.BufferSize];
-
-            while (socket.State == WebSocketState.Open)
+            var pool = _options.Pool;
+            var buffer = pool.Rent(_options.BufferSize);
+            try
             {
-                var offset = 0;
-                var free = buffer.Length;
-                WebSocketReceiveResult result;
-
-                while (true)
+                while (socket.State == WebSocketState.Open)
                 {
-                    result = await socket
-                        .ReceiveAsync(new ArraySegment<byte>(buffer, offset, free), CancellationToken.None)
-                        .ConfigureAwait(false);
+                    var offset = 0;
+                    var free = buffer.Length;
+                    WebSocketReceiveResult result;
 
-                    offset += result.Count;
-                    free -= result.Count;
-                    
-                    if (result.EndOfMessage || free != 0) break;
-
-                    var newSize = buffer.Length + _options.BufferSize;
-
-                    if (newSize > _options.MaxBufferSize)
+                    while (true)
                     {
-                        throw new ArgumentOutOfRangeException(nameof(result), "Websocket message has length greater then MaxBufferSize");
+                        result = await socket
+                            .ReceiveAsync(new ArraySegment<byte>(buffer, offset, free), CancellationToken.None)
+                            .ConfigureAwait(false);
+
+                        offset += result.Count;
+                        free -= result.Count;
+
+                        if (result.EndOfMessage || free != 0) break;
+
+                        var newSize = buffer.Length + _options.BufferSize;
+
+                        if (newSize > _options.MaxBufferSize)
+                        {
+                            throw new ArgumentOutOfRangeException(nameof(result),
+                                "Websocket message has length greater then MaxBufferSize");
+                        }
+
+                        var newBuffer = pool.Rent(newSize);
+                        Array.Copy(buffer, 0, newBuffer, 0, offset);
+                        pool.Return(buffer);
+                        buffer = newBuffer;
+                        free = buffer.Length - offset;
                     }
 
-                    var newBuffer = new byte[newSize];
-                    Array.Copy(buffer, 0, newBuffer, 0, offset);
-                    buffer = newBuffer;
-                    free = buffer.Length - offset;
+                    await handleMessage(result, buffer, offset).ConfigureAwait(false);
                 }
-
-                await handleMessage(result, buffer, offset).ConfigureAwait(false);
+            }
+            finally
+            {
+                pool.Return(buffer);
             }
         }
     }
